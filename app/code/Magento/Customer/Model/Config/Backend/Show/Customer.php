@@ -24,6 +24,7 @@ class Customer extends \Magento\Framework\App\Config\Value
      */
     protected $storeManager;
 
+
     /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
@@ -79,7 +80,6 @@ class Customer extends \Magento\Framework\App\Config\Value
     public function afterSave()
     {
         $result = parent::afterSave();
-
         $valueConfig = [
             '' => ['is_required' => 0, 'is_visible' => 0],
             'opt' => ['is_required' => 0, 'is_visible' => 1],

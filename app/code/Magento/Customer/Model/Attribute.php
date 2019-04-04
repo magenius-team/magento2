@@ -174,9 +174,9 @@ class Attribute extends \Magento\Eav\Model\Attribute
      */
     public function invalidate()
     {
-        /** @var \Magento\Framework\Indexer\IndexerInterface $indexer */
+        /** @var \Magento\Framework\Indexer\ActionInterface $indexer */
         $indexer = $this->indexerRegistry->get(Customer::CUSTOMER_GRID_INDEXER_ID);
-        $indexer->invalidate();
+        $indexer->executeFull();
     }
 
     /**
