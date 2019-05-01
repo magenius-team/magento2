@@ -126,7 +126,7 @@
             </formElements>
         </field>
     </fieldset>
-    <fieldset name="attribute_options_select_container" component="Magento_Catalog/js/components/visible-on-option/fieldset" sortOrder="15">
+    <!--<fieldset name="attribute_options_select_container" component="Magento_Catalog/js/components/visible-on-option/fieldset" sortOrder="15">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="valuesForOptions" xsi:type="array">
@@ -158,7 +158,7 @@
                     <argument name="data" xsi:type="array">
                         <item name="config" xsi:type="array">
                             <item name="prefixElementName" xsi:type="string">option_</item>
-                            <item name="inputCheckBoxName" xsi:type="string">default.</item>
+                            <item name="inputCheckBoxName" xsi:type="string">default</item>
                             <item name="columnsHeaderClasses" xsi:type="string">control-table-options-th</item>
                             <item name="modules" xsi:type="array">
                                 <item name="rows" xsi:type="string">ns = ${ $.ns }, index = attribute_options_select</item>
@@ -229,7 +229,7 @@
                         <item name="config" xsi:type="array">
                             <item name="prefixElementName" xsi:type="string">option_</item>
                             <item name="inputCheckBoxName" xsi:type="string">default</item>
-                            <item name="isMultiple" xsi:type="boolean">true</item>
+                            <item name="multiple" xsi:type="boolean">true</item>
                             <item name="value" xsi:type="string">1</item>
                             <item name="columnsHeaderClasses" xsi:type="string">control-table-options-th</item>
                             <item name="modules" xsi:type="array">
@@ -259,6 +259,77 @@
                         <dataType>text</dataType>
                         <visible>false</visible>
                         <dataScope>position</dataScope>
+                    </settings>
+                </field>
+            </container>
+        </dynamicRows>
+    </fieldset>-->
+    <fieldset name="attribute_options_select_container" component="Magento_Catalog/js/components/visible-on-option/fieldset" sortOrder="15">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="valuesForOptions" xsi:type="array">
+                    <item name="select" xsi:type="string">select</item>
+                    <item name="multiselect" xsi:type="string">multiselect</item>
+                </item>
+            </item>
+        </argument>
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Values</label>
+        </settings>
+        <dynamicRows name="attribute_options_select">
+            <settings>
+                <addButtonLabel translate="true">Add Value</addButtonLabel>
+                <additionalClasses>
+                    <class name="admin__field-wide">true</class>
+                </additionalClasses>
+                <componentType>dynamicRows</componentType>
+            </settings>
+            <container name="record" component="Magento_Ui/js/dynamic-rows/record">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="isTemplate" xsi:type="boolean">true</item>
+                        <item name="is_collection" xsi:type="boolean">true</item>
+                        <item name="componentType" xsi:type="string">container</item>
+                    </item>
+                </argument>
+                <field name="is_default" component="Magento_Catalog/js/form/element/checkbox" sortOrder="0" formElement="checkbox">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="prefixElementName" xsi:type="string">option_</item>
+                            <item name="inputCheckBoxName" xsi:type="string">default</item>
+                            <item name="columnsHeaderClasses" xsi:type="string">control-table-options-th</item>
+                            <item name="modules" xsi:type="array">
+                                <item name="rows" xsi:type="string">ns = ${ $.ns }, index = attribute_options_select</item>
+                            </item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <additionalClasses>
+                            <class name="control-table-options-cell">true</class>
+                        </additionalClasses>
+                        <dataType>boolean</dataType>
+                        <label translate="true">Is Default</label>
+                        <elementTmpl>Magento_Catalog/form/element/single-checkbox</elementTmpl>
+                    </settings>
+                    <formElements>
+                        <checkbox>
+                            <settings>
+                                <prefer>radio</prefer>
+                            </settings>
+                        </checkbox>
+                    </formElements>
+                </field>
+                <field name="position" component="Magento_Catalog/js/form/element/input" formElement="input">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="prefixName" xsi:type="string">option.order</item>
+                            <item name="prefixElementName" xsi:type="string">option_</item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <dataType>text</dataType>
+                        <visible>false</visible>
                     </settings>
                 </field>
             </container>

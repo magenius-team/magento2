@@ -174,12 +174,12 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
                 $storeLabelConfiguration
             );
 
-            $meta['attribute_options_multiselect_container']['children']['attribute_options_multiselect']['children']
+/*            $meta['attribute_options_multiselect_container']['children']['attribute_options_multiselect']['children']
             ['record']['children']['value_option_' . $storeId] = $this->arrayManager->set(
                 'arguments/data/config',
                 [],
                 $storeLabelConfiguration
-            );
+            );*/
             ++$sortOrder;
         }
 
@@ -199,7 +199,7 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
                 'prefixElementName' => 'option_',
             ]
         );
-        $meta['attribute_options_multiselect_container']['children']['attribute_options_multiselect']['children']
+/*        $meta['attribute_options_multiselect_container']['children']['attribute_options_multiselect']['children']
         ['record']['children']['action_delete'] = $this->arrayManager->set(
             'arguments/data/config',
             [],
@@ -214,7 +214,7 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
                 'prefixName' => 'option.delete',
                 'prefixElementName' => 'option_',
             ]
-        );
+        );*/
         return $meta;
     }
 }

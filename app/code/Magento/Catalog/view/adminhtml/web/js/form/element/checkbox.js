@@ -12,7 +12,11 @@ define([
         defaults: {
             inputCheckBoxName: '',
             prefixElementName: '',
-            parentDynamicRowName: 'visual_swatch'
+            parentDynamicRowName: 'visual_swatch',
+            imports: {
+                changeTmpl:
+                    'product_attribute_add_form.product_attribute_add_form.base_fieldset.frontend_input:value'
+            },
         },
 
         /**
@@ -22,6 +26,7 @@ define([
          */
         initConfig: function () {
             this._super();
+            this.value = [];
             this.configureDataScope();
 
             return this;
@@ -31,11 +36,17 @@ define([
         initialize: function () {
             this._super();
 
-            if (this.rows && this.rows().elems().length === 0) {
+            let recordId = this.parentName.split('.').last();
+            let optionId = 'option_' + recordId;
+            if (optionId in this.source.data.default) {
                 this.checked(true);
             }
 
             return this;
+        },
+
+        initObservable: function () {
+            return this._super().observe('checkboxTmpl').observe('checkboxClass');
         },
 
         /**
@@ -82,6 +93,59 @@ define([
             dataScope += dataScopeArray.reduce(reduceFunction, '');
 
             return dataScope;
+        },
+
+        onExtendedValueChanged: function (newExportedValue) {
+            var isMappedUsed = !_.isEmpty(this.valueMap),
+                oldChecked = this.checked.peek(),
+                oldValue = this.initialValue,
+                newChecked;
+
+            newChecked = newExportedValue.indexOf(oldValue) !== -1;
+
+            if (newChecked !== oldChecked) {
+                this.checked(newChecked);
+            }
+        },
+
+        onCheckedChanged: function (newChecked) {
+            var isMappedUsed = !_.isEmpty(this.valueMap),
+                oldValue = this.initialValue,
+                newValue;
+
+            if (isMappedUsed) {
+                newValue = this.valueMap[newChecked];
+            } else {
+                newValue = oldValue;
+            }
+
+            if (this.checkboxTmpl() === 'radio' && newChecked) {
+                this.value([newValue]);
+            } else if (this.checkboxTmpl() === 'radio' && !newChecked) {
+                if (typeof newValue === 'boolean') {
+                    this.value([newChecked]);
+                } else if (newValue === this.value.peek()) {
+                    this.value([]);
+                }
+
+                if (isMappedUsed) {
+                    this.value(newValue);
+                }
+            } else if (this.checkboxTmpl() === 'checkbox' && newChecked && this.value.indexOf(newValue) === -1) {
+                this.value.push(newValue);
+            } else if (this.checkboxTmpl() === 'checkbox' && !newChecked && this.value.indexOf(newValue) !== -1) {
+                this.value.splice(this.value.indexOf(newValue), 1);
+            }
+        },
+
+        changeTmpl: function (type) {
+            if (type === 'select') {
+                this.checkboxTmpl('radio');
+                this.checkboxClass('admin__control-radio')
+            } else if (type === 'multiselect') {
+                this.checkboxTmpl('checkbox');
+                this.checkboxClass('admin__control-checkbox')
+            }
         }
     });
 });
