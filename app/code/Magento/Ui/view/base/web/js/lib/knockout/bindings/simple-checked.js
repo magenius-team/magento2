@@ -30,8 +30,10 @@ define([
              * Updates checked observable
              */
             updateModel = function () {
-                var  modelValue = ko.dependencyDetection.ignore(valueAccessor),
+                var modelValue = ko.dependencyDetection.ignore(valueAccessor),
                     isChecked = element.checked;
+                isCheckbox = element.type === 'checkbox';
+                isRadio = element.type === 'radio';
 
                 if (ko.computedContext.isInitial()) {
                     return;

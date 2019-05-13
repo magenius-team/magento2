@@ -96,8 +96,7 @@ define([
         },
 
         onExtendedValueChanged: function (newExportedValue) {
-            var isMappedUsed = !_.isEmpty(this.valueMap),
-                oldChecked = this.checked.peek(),
+            var oldChecked = this.checked.peek(),
                 oldValue = this.initialValue,
                 newChecked;
 
@@ -109,16 +108,7 @@ define([
         },
 
         onCheckedChanged: function (newChecked) {
-            var isMappedUsed = !_.isEmpty(this.valueMap),
-                oldValue = this.initialValue,
-                newValue;
-
-            if (isMappedUsed) {
-                newValue = this.valueMap[newChecked];
-            } else {
-                newValue = oldValue;
-            }
-
+            var newValue = this.initialValue;
             if (this.checkboxTmpl() === 'radio' && newChecked) {
                 this.value([newValue]);
             } else if (this.checkboxTmpl() === 'radio' && !newChecked) {
@@ -126,10 +116,6 @@ define([
                     this.value([newChecked]);
                 } else if (newValue === this.value.peek()) {
                     this.value([]);
-                }
-
-                if (isMappedUsed) {
-                    this.value(newValue);
                 }
             } else if (this.checkboxTmpl() === 'checkbox' && newChecked && this.value.indexOf(newValue) === -1) {
                 this.value.push(newValue);
@@ -141,11 +127,14 @@ define([
         changeTmpl: function (type) {
             if (type === 'select') {
                 this.checkboxTmpl('radio');
-                this.checkboxClass('admin__control-radio')
+                this.checkboxClass('admin__control-radio');
+                this.multiple = false;
             } else if (type === 'multiselect') {
                 this.checkboxTmpl('checkbox');
-                this.checkboxClass('admin__control-checkbox')
+                this.checkboxClass('admin__control-checkbox');
+                this.multiple = true;
             }
+            this.value([]);
         }
     });
 });
