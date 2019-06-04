@@ -93,7 +93,7 @@
                 <sortable>false</sortable>
             </settings>
         </column>
-        <actionsColumn name="actions" class="Magento\Sales\Block\Adminhtml\Reorder\Renderer\Action">
+        <actionsColumn name="actions" class="Magento\Sales\Ui\Component\Listing\Column\Reorder">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="viewUrlPath" xsi:type="string">sales/order_create/reorder</item>
