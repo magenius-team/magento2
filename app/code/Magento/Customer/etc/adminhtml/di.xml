@@ -43,6 +43,7 @@
     </type>
     <type name="Magento\Store\Model\Website">
         <plugin name="reindex_customer_grid_after_website_remove" type="Magento\Customer\Model\Plugin\CustomerGridIndexAfterWebsiteDelete" />
+        <plugin name="deleteCustomerGroupExcludedWebsiteAfterWebsiteDelete" type="Magento\Customer\Model\Plugin\Website\DeleteCustomerGroupExcludedWebsite"/>
     </type>
     <type name="Magento\Customer\Model\Customer\DataProviderWithDefaultAddresses">
         <plugin name="addRequestParamToDataProviderRendererUrl" type="Magento\Customer\Model\Plugin\Customer\DataProviderWithDefaultAddresses\AddRequestParamToDataProviderRendererUrl"/>
