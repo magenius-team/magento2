@@ -6,13 +6,14 @@
 
 namespace Magento\Ui\Component\Filters\Type;
 
-use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Data\OptionSourceInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
-use Magento\Ui\Api\BookmarkManagementInterface;
 use Magento\Ui\Component\Form\Element\Select as ElementSelect;
 use Magento\Ui\Component\Filters\FilterModifier;
+use Magento\Ui\View\Element\BookmarkContextInterface;
 
 /**
  * @api
@@ -39,24 +40,22 @@ class Select extends AbstractFilter
     /**
      * @param ContextInterface $context
      * @param UiComponentFactory $uiComponentFactory
-     * @param \Magento\Framework\Api\FilterBuilder $filterBuilder
+     * @param FilterBuilder $filterBuilder
      * @param FilterModifier $filterModifier
      * @param OptionSourceInterface|null $optionsProvider
      * @param array $components
      * @param array $data
-     * @param BookmarkManagementInterface|null $bookmarkManagement
-     * @param RequestInterface|null $request
+     * @param BookmarkContextInterface|null $bookmarkContext
      */
     public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
-        \Magento\Framework\Api\FilterBuilder $filterBuilder,
+        FilterBuilder $filterBuilder,
         FilterModifier $filterModifier,
         OptionSourceInterface $optionsProvider = null,
         array $components = [],
         array $data = [],
-        BookmarkManagementInterface $bookmarkManagement = null,
-        RequestInterface $request = null
+        BookmarkContextInterface $bookmarkContext = null
     ) {
         $this->optionsProvider = $optionsProvider;
         parent::__construct(
@@ -66,8 +65,7 @@ class Select extends AbstractFilter
             $filterModifier,
             $components,
             $data,
-            $bookmarkManagement,
-            $request
+            $bookmarkContext
         );
     }
 
@@ -75,6 +73,7 @@ class Select extends AbstractFilter
      * Prepare component configuration
      *
      * @return void
+     * @throws LocalizedException
      */
     public function prepare()
     {

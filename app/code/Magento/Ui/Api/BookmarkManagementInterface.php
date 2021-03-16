@@ -26,7 +26,7 @@ interface BookmarkManagementInterface
      *
      * @param string $identifier
      * @param string $namespace
-     * @return \Magento\Ui\Api\Data\BookmarkInterface
+     * @return \Magento\Ui\Api\Data\BookmarkInterface|null
      */
     public function getByIdentifierNamespace($identifier, $namespace);
 }

@@ -3,6 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+declare(strict_types=1);
 
 namespace Magento\Framework\View\Element\UiComponent;
 
@@ -25,6 +26,7 @@ use Magento\Framework\View\LayoutInterface as PageLayoutInterface;
  * Request context for UI components to utilize.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.LongVariableName)
  */
 class Context implements ContextInterface
 {
@@ -226,7 +228,7 @@ class Context implements ContextInterface
      */
     public function getFiltersParams()
     {
-        return $this->getRequestParam(self::FILTER_VAR);
+        return $this->getRequestParam(self::FILTER_VAR, []);
     }
 
     /**
@@ -234,7 +236,7 @@ class Context implements ContextInterface
      */
     public function getFilterParam($key, $defaultValue = null)
     {
-        $filter = $this->getFiltersParams() ?? [];
+        $filter = $this->getFiltersParams();
         return $filter[$key] ?? $defaultValue;
     }
 

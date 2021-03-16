@@ -75,7 +75,7 @@ class AddBookmarkAvailabilityFlag
             array_replace(
                 $configData,
                 [
-                    'firstLoad' => $bookmark !== null ? false : true
+                    'firstLoad' => $bookmark === null
                 ]
             )
         ));

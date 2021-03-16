@@ -15,7 +15,8 @@ use Magento\Ui\Api\BookmarkRepositoryInterface;
 
 /**
  * Bookmark Management class provide functional for retrieving bookmarks by params
- * @SuppressWarnings(PHPMD.LongVariable)
+ *
+ * @SuppressWarnings(PHPMD.LongVariableName)
  */
 class BookmarkManagement implements BookmarkManagementInterface
 {

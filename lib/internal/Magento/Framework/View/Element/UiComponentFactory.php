@@ -3,6 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+declare(strict_types=1);
 
 namespace Magento\Framework\View\Element;
 
@@ -25,6 +26,7 @@ use Magento\Framework\View\Element\UiComponent\Factory\ComponentFactoryInterface
  *
  * @api
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.LongVariableName)
  * @since 100.0.2
  */
 class UiComponentFactory extends DataObject

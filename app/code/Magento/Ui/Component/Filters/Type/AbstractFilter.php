@@ -7,14 +7,13 @@ declare(strict_types=1);
 
 namespace Magento\Ui\Component\Filters\Type;
 
-use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ObjectManager;
-use Magento\Ui\Api\BookmarkManagementInterface;
 use Magento\Ui\Component\AbstractComponent;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Ui\Component\Filters\FilterModifier;
+use Magento\Ui\View\Element\BookmarkContextInterface;
 
 //phpcs:disable Magento2.Classes.AbstractApi
 
@@ -32,6 +31,8 @@ abstract class AbstractFilter extends AbstractComponent
 
     /**
      * Filter variable name
+     *
+     * @deplacated
      */
     const FILTER_VAR = 'filters';
 
@@ -66,8 +67,7 @@ abstract class AbstractFilter extends AbstractComponent
      * @param FilterModifier $filterModifier
      * @param array $components
      * @param array $data
-     * @param BookmarkManagementInterface|null $bookmarkManagement
-     * @param RequestInterface|null $request
+     * @param BookmarkContextInterface|null $bookmarkContext
      */
     public function __construct(
         ContextInterface $context,
@@ -76,39 +76,17 @@ abstract class AbstractFilter extends AbstractComponent
         FilterModifier $filterModifier,
         array $components = [],
         array $data = [],
-        BookmarkManagementInterface $bookmarkManagement = null,
-        RequestInterface $request = null
+        BookmarkContextInterface $bookmarkContext = null
     ) {
         $this->uiComponentFactory = $uiComponentFactory;
         $this->filterBuilder = $filterBuilder;
         parent::__construct($context, $components, $data);
         $this->filterModifier = $filterModifier;
 
-        $bookmarkManagement = $bookmarkManagement ?: ObjectManager::getInstance()
-            ->get(BookmarkManagementInterface::class);
-        $request = $request ?: ObjectManager::getInstance()->get(RequestInterface::class);
+        $bookmarkContext = $bookmarkContext ?: ObjectManager::getInstance()
+            ->get(BookmarkContextInterface::class);
 
-        $this->filterData = $this->getContext()->getFiltersParams();
-        if ($this->filterData !== null) {
-            return;
-        }
-
-        $bookmark = $bookmarkManagement->getByIdentifierNamespace(
-            'current',
-            $context->getNamespace()
-        );
-
-        if ($bookmark !== null) {
-            $bookmarkConfig = $bookmark->getConfig();
-            $this->filterData = $bookmarkConfig['current']['filters']['applied'] ?? [];
-
-            $request->setParams(
-                [
-                    'paging' => $bookmarkConfig['current']['paging'] ?? [],
-                    'search' => $bookmarkConfig['current']['search']['value'] ?? ''
-                ]
-            );
-        }
+        $this->filterData = $bookmarkContext->getFilterData();
     }
 
     /**

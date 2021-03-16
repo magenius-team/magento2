@@ -9,22 +9,21 @@ namespace Magento\Ui\Test\Unit\Component\Filters\Type;
 
 use Magento\Framework\Api\Filter;
 use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
+use Magento\Framework\View\Element\UiComponent\ContextInterface as UiContext;
 use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
 use Magento\Framework\View\Element\UiComponent\Processor;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponentInterface;
-use Magento\Ui\Api\BookmarkManagementInterface;
 use Magento\Ui\Component\Filters\FilterModifier;
 use Magento\Ui\Component\Filters\Type\Input;
+use Magento\Ui\View\Element\BookmarkContextInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class InputTest extends TestCase
 {
     /**
-     * @var ContextInterface|MockObject
+     * @var UiContext|MockObject
      */
     protected $contextMock;
 
@@ -44,14 +43,9 @@ class InputTest extends TestCase
     protected $filterModifierMock;
 
     /**
-     * @var BookmarkManagementInterface|MockObject
+     * @var BookmarkContextInterface|MockObject
      */
-    private $bookmarkManagementMock;
-
-    /**
-     * @var RequestInterface|MockObject
-     */
-    private $requestMock;
+    private $bookmarkContextMock;
 
     /**
      * @inheritdoc
@@ -59,7 +53,7 @@ class InputTest extends TestCase
     protected function setUp(): void
     {
         $this->contextMock = $this->getMockForAbstractClass(
-            ContextInterface::class,
+            UiContext::class,
             [],
             '',
             false
@@ -74,12 +68,9 @@ class InputTest extends TestCase
             ['applyFilterModifier']
         );
 
-        $this->bookmarkManagementMock = $this->getMockForAbstractClass(
-            BookmarkManagementInterface::class
+        $this->bookmarkContextMock = $this->getMockForAbstractClass(
+            BookmarkContextInterface::class
         );
-
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMockForAbstractClass();
     }
 
     /**
@@ -90,9 +81,8 @@ class InputTest extends TestCase
     public function testGetComponentName(): void
     {
         $this->contextMock->expects($this->never())->method('getProcessor');
-        $this->bookmarkManagementMock->expects($this->once())
-            ->method('getByIdentifierNamespace')
-            ->willReturn(null);
+        $this->bookmarkContextMock->expects($this->once())
+            ->method('getFilterData');
         $date = new Input(
             $this->contextMock,
             $this->uiComponentFactory,
@@ -100,8 +90,7 @@ class InputTest extends TestCase
             $this->filterModifierMock,
             [],
             [],
-            $this->bookmarkManagementMock,
-            $this->requestMock
+            $this->bookmarkContextMock
         );
 
         $this->assertSame(Input::NAME, $date->getComponentName());
@@ -140,9 +129,6 @@ class InputTest extends TestCase
         $this->contextMock->expects($this->any())
             ->method('addComponentDefinition')
             ->with(Input::NAME, ['extends' => Input::NAME]);
-        $this->contextMock->expects($this->any())
-            ->method('getFiltersParams')
-            ->willReturn($filterData);
         $dataProvider = $this->getMockForAbstractClass(
             DataProviderInterface::class,
             [],
@@ -154,7 +140,13 @@ class InputTest extends TestCase
             ->method('getDataProvider')
             ->willReturn($dataProvider);
 
-        $this->bookmarkManagementMock->expects($this->never())->method('getByIdentifierNamespace');
+        $this->bookmarkContextMock->expects($this->once())
+            ->method('getFilterData')
+            ->willReturn($filterData);
+        $this->contextMock->expects($this->any())
+            ->method('getRequestParam')
+            ->with(UiContext::FILTER_VAR)
+            ->willReturn($filterData);
 
         $this->uiComponentFactory->expects($this->any())
             ->method('create')
@@ -193,8 +185,7 @@ class InputTest extends TestCase
             $this->filterModifierMock,
             [],
             ['name' => $name],
-            $this->bookmarkManagementMock,
-            $this->requestMock
+            $this->bookmarkContextMock
         );
 
         $date->prepare();

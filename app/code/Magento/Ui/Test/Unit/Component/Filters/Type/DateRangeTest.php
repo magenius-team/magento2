@@ -7,24 +7,24 @@ declare(strict_types=1);
 
 namespace Magento\Ui\Test\Unit\Component\Filters\Type;
 
+use Magento\Framework\Api\Filter;
 use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponent\ContextInterface as UiContext;
 use Magento\Framework\View\Element\UiComponent\DataProvider\DataProviderInterface;
 use Magento\Framework\View\Element\UiComponent\Processor;
 use Magento\Framework\View\Element\UiComponentFactory;
-use Magento\Ui\Api\BookmarkManagementInterface;
 use Magento\Ui\Component\Filters\FilterModifier;
 use Magento\Ui\Component\Filters\Type\DateRange;
 use Magento\Ui\Component\Form\Element\DataType\Date as FormDate;
+use Magento\Ui\View\Element\BookmarkContextInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub\ReturnArgument;
 use PHPUnit\Framework\TestCase;
 
 class DateRangeTest extends TestCase
 {
     /**
-     * @var ContextInterface|MockObject
+     * @var UiContext|MockObject
      */
     protected $contextMock;
 
@@ -44,14 +44,9 @@ class DateRangeTest extends TestCase
     protected $filterModifierMock;
 
     /**
-     * @var BookmarkManagementInterface|MockObject
+     * @var BookmarkContextInterface|MockObject
      */
-    private $bookmarkManagementMock;
-
-    /**
-     * @var RequestInterface|MockObject
-     */
-    private $requestMock;
+    private $bookmarkContextMock;
 
     /**
      * Set up
@@ -74,15 +69,9 @@ class DateRangeTest extends TestCase
             ['applyFilterModifier']
         );
 
-        $this->bookmarkManagementMock = $this->getMockForAbstractClass(
-            BookmarkManagementInterface::class
+        $this->bookmarkContextMock = $this->getMockForAbstractClass(
+            BookmarkContextInterface::class
         );
-        $this->bookmarkManagementMock->expects($this->once())
-            ->method('getByIdentifierNamespace')
-            ->willReturn(null);
-
-        $this->requestMock = $this->getMockBuilder(RequestInterface::class)
-            ->getMockForAbstractClass();
     }
 
     /**
@@ -93,6 +82,8 @@ class DateRangeTest extends TestCase
     public function testGetComponentName()
     {
         $this->contextMock->expects($this->never())->method('getProcessor');
+        $this->bookmarkContextMock->expects($this->once())
+            ->method('getFilterData');
         $dateRange = new DateRange(
             $this->contextMock,
             $this->uiComponentFactory,
@@ -100,8 +91,7 @@ class DateRangeTest extends TestCase
             $this->filterModifierMock,
             [],
             [],
-            $this->bookmarkManagementMock,
-            $this->requestMock
+            $this->bookmarkContextMock
         );
         $this->assertSame(DateRange::NAME, $dateRange->getComponentName());
     }
@@ -121,6 +111,7 @@ class DateRangeTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->contextMock->expects($this->atLeastOnce())->method('getProcessor')->willReturn($processor);
+
         /** @var FormDate $uiComponent */
         $uiComponent = $this->createMock(\Magento\Ui\Component\Form\Element\DataType\Date::class);
 
@@ -134,33 +125,50 @@ class DateRangeTest extends TestCase
         $this->contextMock->expects($this->any())
             ->method('addComponentDefinition')
             ->with(DateRange::NAME, ['extends' => DateRange::NAME]);
-        $this->contextMock->expects($this->any())
-            ->method('getRequestParam')
-            ->with(UiContext::FILTER_VAR)
-            ->willReturn($filterData);
         $dataProvider = $this->getMockForAbstractClass(
-            DataProviderInterface::class,
-            [],
-            '',
-            false
+            DataProviderInterface::class
         );
         $this->contextMock->expects($this->any())
             ->method('getDataProvider')
             ->willReturn($dataProvider);
 
         if ($expectedCondition !== null) {
+            $filterMock = $this->createMock(Filter::class);
+            $this->filterBuilderMock->expects($this->any())
+                ->method('setConditionType')
+                ->willReturnSelf();
+            $this->filterBuilderMock->expects($this->any())
+                ->method('setField')
+                ->willReturnSelf();
+            $this->filterBuilderMock->expects($this->any())
+                ->method('setValue')
+                ->willReturnSelf();
+            $this->filterBuilderMock->expects($this->any())
+                ->method('create')
+                ->willReturn($filterMock);
+
             /** @var DataProviderInterface $dataProvider */
             $dataProvider->expects($this->any())
                 ->method('addFilter')
-                ->with($expectedCondition, $name);
+                ->with($filterMock);
 
             $uiComponent->expects($this->any())
                 ->method('getLocale')
                 ->willReturn($expectedCondition['locale']);
             $uiComponent->expects($this->any())
                 ->method('convertDate')
-                ->willReturnArgument(0);
+                ->willReturnCallback(function ($date) {
+                    return new \DateTime($date);
+                });
         }
+
+        $this->bookmarkContextMock->expects($this->once())
+            ->method('getFilterData')
+            ->willReturn($filterData);
+        $this->contextMock->expects($this->any())
+            ->method('getRequestParam')
+            ->with(UiContext::FILTER_VAR)
+            ->willReturn($filterData);
 
         $this->uiComponentFactory->expects($this->any())
             ->method('create')
@@ -174,8 +182,7 @@ class DateRangeTest extends TestCase
             $this->filterModifierMock,
             [],
             ['name' => $name],
-            $this->bookmarkManagementMock,
-            $this->requestMock
+            $this->bookmarkContextMock
         );
 
         $dateRange->prepare();
