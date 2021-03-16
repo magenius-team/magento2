@@ -10,8 +10,10 @@ namespace Magento\Ui\Model;
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Ui\Api\BookmarkManagementInterface;
 use Magento\Ui\Api\BookmarkRepositoryInterface;
+use Magento\Ui\Api\Data\BookmarkInterface;
 
 /**
  * Bookmark Management class provide functional for retrieving bookmarks by params
@@ -98,6 +100,8 @@ class BookmarkManagement implements BookmarkManagementInterface
 
     /**
      * @inheritdoc
+     * @return BookmarkInterface|null
+     * @throws LocalizedException
      */
     public function getByIdentifierNamespace($identifier, $namespace)
     {
