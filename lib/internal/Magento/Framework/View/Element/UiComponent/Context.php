@@ -356,13 +356,15 @@ class Context implements ContextInterface
     {
         $this->acceptType = 'html';
 
-        $rawAcceptType = $this->request->getHeader('Accept', 'text/html');
-        if (strpos($rawAcceptType, 'json') !== false) {
-            $this->acceptType = 'json';
-        } elseif (strpos($rawAcceptType, 'html') !== false) {
-            $this->acceptType = 'html';
-        } elseif (strpos($rawAcceptType, 'xml') !== false) {
-            $this->acceptType = 'xml';
+        $rawAcceptType = $this->request->getHeader('Accept');
+        if ($rawAcceptType !== false) {
+            if (strpos($rawAcceptType, 'json') !== false) {
+                $this->acceptType = 'json';
+            } elseif (strpos($rawAcceptType, 'html') !== false) {
+                $this->acceptType = 'html';
+            } elseif (strpos($rawAcceptType, 'xml') !== false) {
+                $this->acceptType = 'xml';
+            }
         }
     }
 
