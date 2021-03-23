@@ -54,8 +54,8 @@ class ContextTest extends TestCase
         $request = $this->createMock(Http::class);
         $request->expects($this->once())
             ->method('getHeader')
-            ->with('Accept', 'text/html')
-            ->willReturn('text/html');
+            ->with('Accept')
+            ->willReturn(false);
         $buttonProviderFactory =
             $this->getMockBuilder(ButtonProviderFactory::class)
                 ->disableOriginalConstructor()
