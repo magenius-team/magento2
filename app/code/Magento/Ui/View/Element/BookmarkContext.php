@@ -31,7 +31,7 @@ class BookmarkContext implements BookmarkContextInterface
     /**
      * @var array
      */
-    private $filterData;
+    private $bookmarkFilterData;
 
     /**
      * BookmarkContext constructor.
@@ -48,8 +48,6 @@ class BookmarkContext implements BookmarkContextInterface
         $this->bookmarkManagement = $bookmarkManagement;
         $this->request = $request;
         $this->context = $context;
-
-        $this->prepareFilterData();
     }
 
     /**
@@ -57,15 +55,10 @@ class BookmarkContext implements BookmarkContextInterface
      *
      * @return void
      */
-    private function prepareFilterData(): void
+    private function getFilterDataFromBookmark(): array
     {
-        if ($this->filterData === null) {
-            $this->filterData = $this->context->getRequestParam(ContextInterface::FILTER_VAR);
-            if ($this->filterData !== null) {
-                return;
-            }
-
-            $this->filterData = [];
+        if ($this->bookmarkFilterData === null) {
+            $this->bookmarkFilterData = [];
             $bookmark = $this->bookmarkManagement->getByIdentifierNamespace(
                 'current',
                 $this->context->getNamespace()
@@ -73,7 +66,7 @@ class BookmarkContext implements BookmarkContextInterface
 
             if ($bookmark !== null) {
                 $bookmarkConfig = $bookmark->getConfig();
-                $this->filterData = $bookmarkConfig['current']['filters']['applied'] ?? [];
+                $this->bookmarkFilterData = $bookmarkConfig['current']['filters']['applied'] ?? [];
 
                 $this->request->setParams(
                     [
@@ -83,6 +76,8 @@ class BookmarkContext implements BookmarkContextInterface
                 );
             }
         }
+
+        return $this->bookmarkFilterData;
     }
 
     /**
@@ -92,6 +87,11 @@ class BookmarkContext implements BookmarkContextInterface
      */
     public function getFilterData(): array
     {
-        return $this->filterData;
+        $contextFilterData = $this->context->getRequestParam(ContextInterface::FILTER_VAR);
+        if ($contextFilterData !== null) {
+            return $contextFilterData;
+        }
+
+        return $this->getFilterDataFromBookmark();
     }
 }
