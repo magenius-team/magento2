@@ -57,9 +57,7 @@ define([
                 // be no more pending assets.
                 resolver(this.reload, this);
             } else {
-                /* Call set data with predefined data for correct rendering action column */
-                this.setData(this.data);
-
+                this.processData(this.data);
                 resolver(this.triggerReloaded, this);
             }
 
@@ -67,9 +65,15 @@ define([
         },
 
         /**
-         * Trigger reloaded event
+         * Trigger reloaded event on first load with predefined data
          */
         triggerReloaded: function () {
+            var diff;
+
+            /* Invoke subscribers for predefined data */
+            diff = utils.compare({}, this.data, 'data');
+            this._notifyChanges(diff);
+
             this.initialized = true;
             this.trigger('reloaded');
         },
