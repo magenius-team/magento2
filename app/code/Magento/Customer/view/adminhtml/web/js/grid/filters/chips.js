@@ -3,6 +3,9 @@
  * See COPYING.txt for license details.
  */
 
+/**
+ * @deprecated
+ */
 define([
     'Magento_Ui/js/grid/filters/chips'
 ], function (Chips) {

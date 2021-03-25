@@ -13,7 +13,7 @@ use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Ui\Component\Filters\FilterModifier;
-use Magento\Ui\View\Element\BookmarkContextInterface;
+use Magento\Ui\View\Element\BookmarkContextProviderInterface;
 
 //phpcs:disable Magento2.Classes.AbstractApi
 
@@ -67,7 +67,7 @@ abstract class AbstractFilter extends AbstractComponent
      * @param FilterModifier $filterModifier
      * @param array $components
      * @param array $data
-     * @param BookmarkContextInterface|null $bookmarkContext
+     * @param BookmarkContextProviderInterface|null $bookmarkContextProvider
      */
     public function __construct(
         ContextInterface $context,
@@ -76,15 +76,16 @@ abstract class AbstractFilter extends AbstractComponent
         FilterModifier $filterModifier,
         array $components = [],
         array $data = [],
-        BookmarkContextInterface $bookmarkContext = null
+        BookmarkContextProviderInterface $bookmarkContextProvider = null
     ) {
         $this->uiComponentFactory = $uiComponentFactory;
         $this->filterBuilder = $filterBuilder;
         parent::__construct($context, $components, $data);
         $this->filterModifier = $filterModifier;
 
-        $bookmarkContext = $bookmarkContext ?: ObjectManager::getInstance()
-            ->get(BookmarkContextInterface::class);
+        $bookmarkContextProvider = $bookmarkContextProvider ?: ObjectManager::getInstance()
+            ->get(BookmarkContextProviderInterface::class);
+        $bookmarkContext = $bookmarkContextProvider->getByUiContext($context);
 
         $this->filterData = $bookmarkContext->getFilterData();
     }

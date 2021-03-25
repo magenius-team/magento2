@@ -13,7 +13,7 @@ use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Ui\Component\Form\Element\Select as ElementSelect;
 use Magento\Ui\Component\Filters\FilterModifier;
-use Magento\Ui\View\Element\BookmarkContextInterface;
+use Magento\Ui\View\Element\BookmarkContextProviderInterface;
 
 /**
  * @api
@@ -45,7 +45,7 @@ class Select extends AbstractFilter
      * @param OptionSourceInterface|null $optionsProvider
      * @param array $components
      * @param array $data
-     * @param BookmarkContextInterface|null $bookmarkContext
+     * @param BookmarkContextProviderInterface|null $bookmarkContextProvider
      */
     public function __construct(
         ContextInterface $context,
@@ -55,7 +55,7 @@ class Select extends AbstractFilter
         OptionSourceInterface $optionsProvider = null,
         array $components = [],
         array $data = [],
-        BookmarkContextInterface $bookmarkContext = null
+        BookmarkContextProviderInterface $bookmarkContextProvider = null
     ) {
         $this->optionsProvider = $optionsProvider;
         parent::__construct(
@@ -65,7 +65,7 @@ class Select extends AbstractFilter
             $filterModifier,
             $components,
             $data,
-            $bookmarkContext
+            $bookmarkContextProvider
         );
     }
 

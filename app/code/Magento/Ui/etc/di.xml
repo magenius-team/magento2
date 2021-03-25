@@ -25,6 +25,7 @@
     <preference for="Magento\Ui\Config\Argument\ParserInterface" type="Magento\Ui\Config\Argument\Parser\Composite"/>
     <preference for="Magento\Ui\DataProvider\Modifier\PoolInterface" type="Magento\Ui\DataProvider\Modifier\Pool"/>
     <preference for="Magento\Ui\View\Element\BookmarkContextInterface" type="Magento\Ui\View\Element\BookmarkContext"/>
+    <preference for="Magento\Ui\View\Element\BookmarkContextProviderInterface" type="Magento\Ui\View\Element\BookmarkContextProvider"/>
     <type name="Magento\Ui\TemplateEngine\Xhtml\Result" shared="false"/>
     <type name="Magento\Framework\View\Element\UiComponent\TemplateAdapter" shared="false" />
     <type name="Magento\Framework\View\TemplateEngineFactory">

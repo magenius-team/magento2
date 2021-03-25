@@ -36,24 +36,24 @@ class BookmarkContext implements BookmarkContextInterface
     /**
      * BookmarkContext constructor.
      *
+     * @param ContextInterface $context
      * @param BookmarkManagementInterface $bookmarkManagement
      * @param RequestInterface $request
-     * @param ContextInterface $context
      */
     public function __construct(
+        ContextInterface $context,
         BookmarkManagementInterface $bookmarkManagement,
-        RequestInterface $request,
-        ContextInterface $context
+        RequestInterface $request
     ) {
+        $this->context = $context;
         $this->bookmarkManagement = $bookmarkManagement;
         $this->request = $request;
-        $this->context = $context;
     }
 
     /**
      * Prepare filter data from bookmarks
      *
-     * @return void
+     * @return array
      */
     private function getFilterDataFromBookmark(): array
     {
