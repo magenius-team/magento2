@@ -17,6 +17,7 @@ use Magento\Ui\Component\Filters\FilterModifier;
 use Magento\Ui\Component\Filters\Type\Date;
 use Magento\Ui\Component\Form\Element\DataType\Date as FormDate;
 use Magento\Ui\View\Element\BookmarkContextInterface;
+use Magento\Ui\View\Element\BookmarkContextProviderInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -56,6 +57,11 @@ class DateTest extends TestCase
     private $bookmarkContextMock;
 
     /**
+     * @var BookmarkContextProviderInterface|MockObject
+     */
+    private $bookmarkContextProviderMock;
+
+    /**
      * Set up
      */
     protected function setUp(): void
@@ -76,9 +82,15 @@ class DateTest extends TestCase
 
         $this->dataProviderMock = $this->getMockForAbstractClass(DataProviderInterface::class);
 
+        $this->bookmarkContextProviderMock = $this->getMockForAbstractClass(
+            BookmarkContextProviderInterface::class
+        );
         $this->bookmarkContextMock = $this->getMockForAbstractClass(
             BookmarkContextInterface::class
         );
+        $this->bookmarkContextProviderMock->expects($this->once())
+            ->method('getByUiContext')
+            ->willReturn($this->bookmarkContextMock);
     }
 
     /**
@@ -98,7 +110,7 @@ class DateTest extends TestCase
             $this->filterModifierMock,
             [],
             [],
-            $this->bookmarkContextMock
+            $this->bookmarkContextProviderMock
         );
 
         static::assertSame(Date::NAME, $date->getComponentName());
@@ -167,7 +179,7 @@ class DateTest extends TestCase
                 'name' => $name,
                 'config' => ['options' => ['showsTime' => $showsTime]],
             ],
-            $this->bookmarkContextMock
+            $this->bookmarkContextProviderMock
         );
         $date->prepare();
     }

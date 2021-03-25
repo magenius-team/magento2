@@ -17,8 +17,8 @@ use Magento\Ui\Component\Filters\FilterModifier;
 use Magento\Ui\Component\Filters\Type\DateRange;
 use Magento\Ui\Component\Form\Element\DataType\Date as FormDate;
 use Magento\Ui\View\Element\BookmarkContextInterface;
+use Magento\Ui\View\Element\BookmarkContextProviderInterface;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\MockObject\Stub\ReturnArgument;
 use PHPUnit\Framework\TestCase;
 
 class DateRangeTest extends TestCase
@@ -49,6 +49,11 @@ class DateRangeTest extends TestCase
     private $bookmarkContextMock;
 
     /**
+     * @var BookmarkContextProviderInterface|MockObject
+     */
+    private $bookmarkContextProviderMock;
+
+    /**
      * Set up
      */
     protected function setUp(): void
@@ -68,10 +73,15 @@ class DateRangeTest extends TestCase
             FilterModifier::class,
             ['applyFilterModifier']
         );
-
+        $this->bookmarkContextProviderMock = $this->getMockForAbstractClass(
+            BookmarkContextProviderInterface::class
+        );
         $this->bookmarkContextMock = $this->getMockForAbstractClass(
             BookmarkContextInterface::class
         );
+        $this->bookmarkContextProviderMock->expects($this->once())
+            ->method('getByUiContext')
+            ->willReturn($this->bookmarkContextMock);
     }
 
     /**
@@ -91,7 +101,7 @@ class DateRangeTest extends TestCase
             $this->filterModifierMock,
             [],
             [],
-            $this->bookmarkContextMock
+            $this->bookmarkContextProviderMock
         );
         $this->assertSame(DateRange::NAME, $dateRange->getComponentName());
     }
@@ -182,7 +192,7 @@ class DateRangeTest extends TestCase
             $this->filterModifierMock,
             [],
             ['name' => $name],
-            $this->bookmarkContextMock
+            $this->bookmarkContextProviderMock
         );
 
         $dateRange->prepare();

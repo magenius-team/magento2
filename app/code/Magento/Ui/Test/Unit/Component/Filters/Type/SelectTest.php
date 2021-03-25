@@ -18,6 +18,7 @@ use Magento\Framework\View\Element\UiComponentInterface;
 use Magento\Ui\Component\Filters\FilterModifier;
 use Magento\Ui\Component\Filters\Type\Select;
 use Magento\Ui\View\Element\BookmarkContextInterface;
+use Magento\Ui\View\Element\BookmarkContextProviderInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -49,6 +50,11 @@ class SelectTest extends TestCase
     private $bookmarkContextMock;
 
     /**
+     * @var BookmarkContextProviderInterface|MockObject
+     */
+    private $bookmarkContextProviderMock;
+
+    /**
      * Set up
      */
     protected function setUp(): void
@@ -69,9 +75,15 @@ class SelectTest extends TestCase
             ['applyFilterModifier']
         );
 
+        $this->bookmarkContextProviderMock = $this->getMockForAbstractClass(
+            BookmarkContextProviderInterface::class
+        );
         $this->bookmarkContextMock = $this->getMockForAbstractClass(
             BookmarkContextInterface::class
         );
+        $this->bookmarkContextProviderMock->expects($this->once())
+            ->method('getByUiContext')
+            ->willReturn($this->bookmarkContextMock);
     }
 
     /**
@@ -92,7 +104,7 @@ class SelectTest extends TestCase
             null,
             [],
             [],
-            $this->bookmarkContextMock
+            $this->bookmarkContextProviderMock
         );
 
         $this->assertSame(Select::NAME, $date->getComponentName());
@@ -193,7 +205,7 @@ class SelectTest extends TestCase
             $selectOptions,
             [],
             $data,
-            $this->bookmarkContextMock
+            $this->bookmarkContextProviderMock
         );
 
         $date->prepare();
