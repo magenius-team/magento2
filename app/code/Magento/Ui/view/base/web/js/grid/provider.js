@@ -32,7 +32,8 @@ define([
             },
             listens: {
                 params: 'onParamsChange',
-                requestConfig: 'updateRequestConfig'
+                requestConfig: 'updateRequestConfig',
+                lastError: 'showAlert'
             },
             ignoreTmpls: {
                 data: true
@@ -49,12 +50,12 @@ define([
             _.bindAll(this, 'onReload');
 
             this._super()
-                .initStorage();
+                .initStorage()
+                /* Invoke showAlert if error on page load */
+                .showAlert(this.lastError);
 
             if (this.firstLoad) {
                 this.clearData();
-                // Load data when there will
-                // be no more pending assets.
                 resolver(this.reload, this);
             } else {
                 this.processData(this.data);
@@ -172,10 +173,6 @@ define([
             this.set('lastError', true);
 
             this.initialized = true;
-
-            alert({
-                content: $t('Something went wrong.')
-            });
         },
 
         /**
@@ -200,6 +197,19 @@ define([
         updateRequestConfig: function (requestConfig) {
             if (this.storage()) {
                 _.extend(this.storage().requestConfig, requestConfig);
+            }
+        },
+
+        /**
+         * Show alert notification
+         *
+         * @param {Boolean} isError
+         */
+        showAlert: function (isError) {
+            if (isError) {
+                alert({
+                    content: $t('Something went wrong.')
+                });
             }
         }
     });

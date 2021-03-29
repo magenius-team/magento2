@@ -34,6 +34,11 @@ class BookmarkContext implements BookmarkContextInterface
     private $bookmarkFilterData;
 
     /**
+     * @var bool
+     */
+    private $bookmarkAvailable = false;
+
+    /**
      * BookmarkContext constructor.
      *
      * @param ContextInterface $context
@@ -65,6 +70,7 @@ class BookmarkContext implements BookmarkContextInterface
             );
 
             if ($bookmark !== null) {
+                $this->bookmarkAvailable = true;
                 $bookmarkConfig = $bookmark->getConfig();
                 $this->bookmarkFilterData = $bookmarkConfig['current']['filters']['applied'] ?? [];
 
@@ -81,9 +87,7 @@ class BookmarkContext implements BookmarkContextInterface
     }
 
     /**
-     * Retrieve filter data from request or bookmark
-     *
-     * @return array
+     * @inheritDoc
      */
     public function getFilterData(): array
     {
@@ -93,5 +97,13 @@ class BookmarkContext implements BookmarkContextInterface
         }
 
         return $this->getFilterDataFromBookmark();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isBookmarkAvailable(): bool
+    {
+        return $this->bookmarkAvailable;
     }
 }
