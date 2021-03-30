@@ -36,12 +36,16 @@
         </dataProvider>
     </dataSource>
     <listingToolbar name="listing_top">
+        <bookmark name="bookmarks"/>
         <columnsControls name="columns_controls"/>
         <filterSearch name="fulltext"/>
-        <filters name="listing_filters">
+        <filters name="listing_filters" component="Magento_Customer/js/grid/filters/filters">
             <settings>
                 <childDefaults>
                     <param name="provider" xsi:type="string">customer_address_listing.customer_address_listing.listing_top.listing_filters</param>
+                    <param name="imports" xsi:type="array">
+                        <item name="visible" xsi:type="string">customer_address_listing.customer_address_listing.listing_top.bookmarks:current.columns.${ $.index }.visible</item>
+                    </param>
                 </childDefaults>
             </settings>
         </filters>
