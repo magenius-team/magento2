@@ -16,12 +16,11 @@ use Magento\Ui\Component\Filters\FilterModifier;
 use Magento\Ui\View\Element\BookmarkContextInterface;
 use Magento\Ui\View\Element\BookmarkContextProviderInterface;
 
-//phpcs:disable Magento2.Classes.AbstractApi
-
 /**
  * Abstract class AbstractFilter
  * @api
  * @since 100.0.2
+ * phpcs:disable Magento2.Classes.AbstractApi
  */
 abstract class AbstractFilter extends AbstractComponent
 {
@@ -33,7 +32,8 @@ abstract class AbstractFilter extends AbstractComponent
     /**
      * Filter variable name
      *
-     * @deplacated
+     * @deprecated Use ContextInterface for retrieve filters
+     * @see ContextInterface
      */
     const FILTER_VAR = 'filters';
 

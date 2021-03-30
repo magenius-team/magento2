@@ -51,7 +51,7 @@ define([
 
             this._super()
                 .initStorage()
-                /* Invoke showAlert if error on page load */
+                // Invoke showAlert if error on page load
                 .showAlert(this.lastError);
 
             if (this.firstLoad) {
@@ -71,7 +71,7 @@ define([
         triggerReloaded: function () {
             var diff;
 
-            /* Invoke subscribers for predefined data */
+            // Invoke subscribers for predefined data
             diff = utils.compare({}, this.data, 'data');
             this._notifyChanges(diff);
 

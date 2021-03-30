@@ -409,7 +409,6 @@ define([
                     'reset to its original state. Please edit filters then click apply.';
 
             if (isError) {
-                console.log(this.bookmarksActiveIndex);
                 this.clear();
 
                 $('body').notification('clear')
