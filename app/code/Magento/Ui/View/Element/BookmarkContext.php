@@ -74,16 +74,52 @@ class BookmarkContext implements BookmarkContextInterface
                 $bookmarkConfig = $bookmark->getConfig();
                 $this->bookmarkFilterData = $bookmarkConfig['current']['filters']['applied'] ?? [];
 
-                $this->request->setParams(
-                    [
-                        'paging' => $bookmarkConfig['current']['paging'] ?? [],
-                        'search' => $bookmarkConfig['current']['search']['value'] ?? ''
-                    ]
-                );
+                $this->preparePagingParams($bookmarkConfig)
+                    ->prepareSoringParams($bookmarkConfig);
             }
         }
 
         return $this->bookmarkFilterData;
+    }
+
+    /**
+     * Prepare paging params
+     *
+     * @param $bookmarkConfig
+     * @return BookmarkContext
+     */
+    private function preparePagingParams($bookmarkConfig): BookmarkContext
+    {
+        $this->request->setParams(
+            [
+                'paging' => $bookmarkConfig['current']['paging'] ?? [],
+                'search' => $bookmarkConfig['current']['search']['value'] ?? ''
+            ]
+        );
+        return $this;
+    }
+
+    /**
+     * Prepare sorting params
+     *
+     * @param $bookmarkConfig
+     * @return BookmarkContext
+     */
+    private function prepareSoringParams($bookmarkConfig): BookmarkContext
+    {
+        $columns = $bookmarkConfig['current']['columns'] ?? [];
+        foreach ($columns as $columnName => $columnConfig) {
+            if (isset($columnConfig['sorting']) && $columnConfig['sorting'] !== false) {
+                $this->request->setParams([
+                    'sorting' => [
+                        'field' => $columnName,
+                        'direction' => $columnConfig['sorting']
+                    ]
+                ]);
+                break;
+            }
+        }
+        return $this;
     }
 
     /**
