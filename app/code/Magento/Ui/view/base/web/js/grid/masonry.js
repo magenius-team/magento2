@@ -99,12 +99,22 @@ define([
                 return;
             }
             this.imageMargin = parseInt(this.imageMargin, 10);
-            this.container = $('[data-id="' + this.containerId + '"]')[0];
 
-            this.setLayoutStyles();
+            this.initRows();
+            this.setLayoutStylesWhenLoaded();
             this.setEventListener();
 
             return this;
+        },
+
+        initRows: function () {
+            var rowNumber = 1;
+
+            this.rows().forEach(function (row) {
+                row.styles = ko.observable({});
+                row.rowNumber = rowNumber;
+                rowNumber++;
+            });
         },
 
         /**
@@ -122,7 +132,7 @@ define([
         updateStyles: function () {
             raf(function () {
                 this.containerWidth = window.innerWidth;
-                this.setLayoutStyles();
+                this.setLayoutStylesWhenLoaded();
             }.bind(this), this.refreshFPS);
         },
 
@@ -135,8 +145,7 @@ define([
                 ratio = 0,
                 rowHeight = 0,
                 calcHeight = 0,
-                isLastRow = false,
-                rowNumber = 1;
+                isLastRow = false;
 
             this.setMinRatio();
 
@@ -154,11 +163,10 @@ define([
                 rowHeight = calcHeight < this.maxImageHeight ? calcHeight : this.maxImageHeight;
                 isLastRow = index + 1 === this.rows().length;
 
-                this.assignImagesToRow(rowImages, rowNumber, rowHeight, isLastRow);
+                this.assignImagesToRow(rowImages, rowHeight, isLastRow);
 
                 rowImages = [];
                 ratio = 0;
-                rowNumber++;
 
             }.bind(this));
         },
@@ -167,11 +175,10 @@ define([
          * Apply styles, css classes and add properties for images in the row
          *
          * @param {Object[]} images
-         * @param {Number} rowNumber
          * @param {Number} rowHeight
          * @param {Boolean} isLastRow
          */
-        assignImagesToRow: function (images, rowNumber, rowHeight, isLastRow) {
+        assignImagesToRow: function (images, rowHeight, isLastRow) {
             var imageWidth;
 
             images.forEach(function (img) {
@@ -180,7 +187,6 @@ define([
                 this.setImageClass(img, {
                     bottom: isLastRow
                 });
-                img.rowNumber = rowNumber;
             }.bind(this));
 
             images[0].firstInRow = true;
@@ -191,6 +197,7 @@ define([
          * Wait for container to initialize
          */
         waitForContainer: function (callback) {
+            this.container = $('[data-id="' + this.containerId + '"]')[0];
             if (typeof this.container === 'undefined') {
                 setTimeout(function () {
                     this.waitForContainer(callback);
@@ -217,13 +224,13 @@ define([
          * @param {Number} height
          */
         setImageStyles: function (img, width, height) {
-            if (!img.styles) {
-                img.styles = ko.observable();
-            }
-            img.styles({
-                width: parseInt(width, 10) + 'px',
-                height: parseInt(height, 10) + 'px'
+            var styles = img.styles();
+
+            styles = _.extend(styles, {
+                width: parseInt(width, 10).toString() + 'px',
+                height: parseInt(height, 10).toString() + 'px'
             });
+            img.styles(styles);
         },
 
         /**
