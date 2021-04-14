@@ -14,6 +14,7 @@ define([
     return Listing.extend({
         defaults: {
             template: 'ui/grid/masonry',
+            imageRows: {},
             imports: {
                 rows: '${ $.provider }:data.items',
                 errorMessage: '${ $.provider }:data.errorMessage'
@@ -82,7 +83,6 @@ define([
         initObservable: function () {
             this._super()
                 .observe([
-                    'rows',
                     'errorMessage'
                 ]);
 
@@ -91,15 +91,17 @@ define([
 
         /**
          * Init component handler
-         * @param {Object} rows
+         * @param {Object} images
          * @return {Object}
          */
-        initComponent: function (rows) {
-            if (!rows.length) {
+        initComponent: function (images) {
+            if (!images.length) {
                 return;
             }
             this.imageMargin = parseInt(this.imageMargin, 10);
 
+            this.setMinRatio();
+            this.clearImageRows();
             this.initRows();
             this.setLayoutStylesWhenLoaded();
             this.setEventListener();
@@ -108,13 +110,67 @@ define([
         },
 
         initRows: function () {
-            var rowNumber = 1;
+            var ratio = 0,
+                rowNumber = 1;
 
-            this.rows().forEach(function (row) {
-                row.styles = ko.observable({});
-                row.rowNumber = rowNumber;
+            this.rows.forEach(function (image, index) {
+                this.initRow(rowNumber);
+
+                image.styles = ko.observable({});
+                image.ratio = parseFloat((image.width / image.height).toFixed(2));
+                image.rowNumber = rowNumber;
+                ratio += image.ratio;
+                this.assignImageToRow(image, rowNumber);
+                if (ratio < this.minRatio && index + 1 !== this.rows.length) {
+                    // Row has more space for images and the image is not the last one - proceed to the next iteration
+                    return;
+                }
+                this.assignRatioToRow(ratio, rowNumber);
+
+                ratio = 0;
                 rowNumber++;
-            });
+            }.bind(this));
+        },
+
+        /**
+         * Initialize row list by row number
+         *
+         * @param {Number} rowNumber
+         */
+        initRow: function (rowNumber) {
+            if (!this.imageRows.hasOwnProperty(rowNumber)) {
+                this.imageRows[rowNumber] = {
+                    ratio: 0,
+                    images: []
+                };
+            }
+        },
+
+        /**
+         * Clear image rows before initialize
+         */
+        clearImageRows: function () {
+            this.imageRows = {};
+        },
+
+        /**
+         * Assign image to row
+         *
+         * @param {Object} image
+         * @param {Number} rowNumber
+         */
+        assignImageToRow: function (image, rowNumber) {
+            this.imageRows[rowNumber].images.push(image);
+        },
+
+        /**
+         * Assign image to row
+         *
+         * @param {Number} ratio
+         * @param {Number} rowNumber
+         */
+        assignRatioToRow: function (ratio, rowNumber) {
+            this.imageRows[rowNumber].ratio = ratio;
         },
 
         /**
@@ -141,32 +197,18 @@ define([
          */
         setLayoutStyles: function () {
             var containerWidth = parseInt(this.container.clientWidth, 10),
-                rowImages = [],
-                ratio = 0,
-                rowHeight = 0,
-                calcHeight = 0,
-                isLastRow = false;
+                isLastRow = false,
+                ratio,
+                rowHeight,
+                calcHeight;
 
-            this.setMinRatio();
-
-            this.rows().forEach(function (image, index) {
-                ratio += parseFloat((image.width / image.height).toFixed(2));
-                rowImages.push(image);
-
-                if (ratio < this.minRatio && index + 1 !== this.rows().length) {
-                    // Row has more space for images and the image is not the last one - proceed to the next iteration
-                    return;
-                }
-
-                ratio = Math.max(ratio, this.minRatio);
-                calcHeight = (containerWidth - this.imageMargin * rowImages.length) / ratio;
+            _.each(this.imageRows, function (row, rowNumber) {
+                ratio = Math.max(row.ratio, this.minRatio);
+                calcHeight = (containerWidth - this.imageMargin * row.images.length) / ratio;
                 rowHeight = calcHeight < this.maxImageHeight ? calcHeight : this.maxImageHeight;
-                isLastRow = index + 1 === this.rows().length;
+                isLastRow = parseInt(rowNumber) === Object.keys(this.imageRows).length;
 
-                this.assignImagesToRow(rowImages, rowHeight, isLastRow);
-
-                rowImages = [];
-                ratio = 0;
+                this.updateImagesInRow(row.images, rowHeight, isLastRow);
 
             }.bind(this));
         },
@@ -178,7 +220,7 @@ define([
          * @param {Number} rowHeight
          * @param {Boolean} isLastRow
          */
-        assignImagesToRow: function (images, rowHeight, isLastRow) {
+        updateImagesInRow: function (images, rowHeight, isLastRow) {
             var imageWidth;
 
             images.forEach(function (img) {
@@ -267,15 +309,6 @@ define([
             );
 
             this.minRatio = minRatio ? minRatio : this.defaultMinRatio;
-        },
-
-        /**
-         * Checks if grid has data.
-         *
-         * @returns {Boolean}
-         */
-        hasData: function () {
-            return !!this.rows() && !!this.rows().length;
         },
 
         /**
