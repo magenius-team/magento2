@@ -29,9 +29,7 @@ define([
             },
             masonryMock = {
                 shows: jasmine.createSpy().and.returnValue([]),
-                rows: jasmine.createSpy().and.returnValue({
-                    1: secondRecordMock
-                })
+                rows: [recordMock, secondRecordMock]
             };
 
         beforeEach(function () {
