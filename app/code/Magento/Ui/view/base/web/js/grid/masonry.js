@@ -91,6 +91,7 @@ define([
 
         /**
          * Init component handler
+         *
          * @param {Object} images
          * @return {Object}
          */
@@ -109,6 +110,9 @@ define([
             return this;
         },
 
+        /**
+         * Initialize rows
+         */
         initRows: function () {
             var ratio = 0,
                 rowNumber = 1;
@@ -121,10 +125,12 @@ define([
                 image.rowNumber = rowNumber;
                 ratio += image.ratio;
                 this.assignImageToRow(image, rowNumber);
+
                 if (ratio < this.minRatio && index + 1 !== this.rows.length) {
                     // Row has more space for images and the image is not the last one - proceed to the next iteration
                     return;
                 }
+
                 this.assignRatioToRow(ratio, rowNumber);
 
                 ratio = 0;
@@ -240,6 +246,7 @@ define([
          */
         waitForContainer: function (callback) {
             this.container = $('[data-id="' + this.containerId + '"]')[0];
+
             if (typeof this.container === 'undefined') {
                 setTimeout(function () {
                     this.waitForContainer(callback);
