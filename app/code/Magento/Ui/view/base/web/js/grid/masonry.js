@@ -212,7 +212,7 @@ define([
                 ratio = Math.max(row.ratio, this.minRatio);
                 calcHeight = (containerWidth - this.imageMargin * row.images.length) / ratio;
                 rowHeight = calcHeight < this.maxImageHeight ? calcHeight : this.maxImageHeight;
-                isLastRow = parseInt(rowNumber) === Object.keys(this.imageRows).length;
+                isLastRow = parseInt(rowNumber, 10) === Object.keys(this.imageRows).length;
 
                 this.updateImagesInRow(row.images, rowHeight, isLastRow);
 
