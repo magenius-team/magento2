@@ -66,7 +66,7 @@ define([
                     return;
                 }
 
-                this.show(this.masonry().rows()[newValue]);
+                this.show(this.masonry().rows[newValue]);
             }.bind(this));
 
             return this;
@@ -96,7 +96,7 @@ define([
         next: function (record) {
             var recordToShow;
 
-            if (record._rowIndex + 1 === this.masonry().rows().length) {
+            if (record._rowIndex + 1 === this.masonry().rows.length) {
                 return;
             }
 
@@ -130,7 +130,7 @@ define([
          * @return {Object}
          */
         getRecord: function (recordIndex) {
-            return this.masonry().rows()[recordIndex];
+            return this.masonry().rows[recordIndex];
         },
 
         /**
