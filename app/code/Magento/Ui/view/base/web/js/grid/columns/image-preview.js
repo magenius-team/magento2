@@ -118,7 +118,6 @@ define([
             }
             recordToShow = this.getRecord(record._rowIndex - 1);
 
-            recordToShow.rowNumber = record.firstInRow ? record.rowNumber - 1 : record.rowNumber;
             this.show(recordToShow);
         },
 
