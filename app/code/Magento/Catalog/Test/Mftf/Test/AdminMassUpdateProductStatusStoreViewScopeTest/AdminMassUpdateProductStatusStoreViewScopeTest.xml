@@ -49,6 +49,16 @@
             </actionGroup>
         </before>
         <after>
+            <!--Delete website -->
+            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteSecondWebsite">
+                <argument name="websiteName" value="{{customWebsite.name}}"/>
+            </actionGroup>
+            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearFilters"/>
+
+            <actionGroup ref="AssertErrorMessageAfterDeletingWebsiteActionGroup" stepKey="verifyErrorMessage">
+                <argument name="errorMessage" value="Something went wrong with processing the default view and we have restored the filter to its original state."/>
+            </actionGroup>
+
             <!--Delete Products -->
             <actionGroup ref="DeleteProductBySkuActionGroup" stepKey="deleteProduct1">
                 <argument name="sku" value="{{simpleProductForMassUpdate.sku}}"/>
@@ -57,12 +67,6 @@
                 <argument name="sku" value="{{simpleProductForMassUpdate2.sku}}"/>
             </actionGroup>
             <actionGroup ref="ClearFiltersAdminDataGridActionGroup" stepKey="clearFilter"/>
-
-            <!--Delete website -->
-            <actionGroup ref="AdminDeleteWebsiteActionGroup" stepKey="deleteSecondWebsite">
-                <argument name="websiteName" value="{{customWebsite.name}}"/>
-            </actionGroup>
-            <actionGroup ref="AdminClearFiltersActionGroup" stepKey="clearFilters"/>
         </after>
 
         <!-- Search and select products -->
