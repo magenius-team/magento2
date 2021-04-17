@@ -298,11 +298,18 @@ class Collection implements \IteratorAggregate, \Countable, ArrayInterface, Coll
      */
     public function getFirstItem()
     {
-        $this->load();
+        /*$this->load();*/
+        if ($this->isLoaded()) {
+            return $this->getLoadedFirstItem();
+        }
 
+        return $this->getNonLoadedFirstItem();
+    }
+
+    private function getLoadedFirstItem()
+    {
         if (count($this->_items)) {
-            reset($this->_items);
-            return current($this->_items);
+            return reset($this->_items);
         }
 
         return $this->_entityFactory->create($this->_itemObjectClass);
